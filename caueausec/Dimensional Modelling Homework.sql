@@ -1,3 +1,23 @@
+/* Dimensional Data Modeling - Week 1 - Cauê Marchionatti Ausec Homework Assignment*/
+
+
+/* DDL for actors table: Create a DDL for an actors table with the following fields:
+
+- films: An array of struct with the following fields:
+    -- film: The name of the film.
+    -- votes: The number of votes the film received.
+    -- rating: The rating of the film.
+    -- filmid: A unique identifier for each film.
+
+- quality_class: This field represents an actor's performance quality, determined by the average rating of movies of their most recent year. It's categorized as follows:
+    -- star: Average rating > 8.
+    -- good: Average rating > 7 and ≤ 8.
+    -- average: Average rating > 6 and ≤ 7.
+    -- bad: Average rating ≤ 6.
+
+- is_active: A BOOLEAN field that indicates whether an actor is currently active in the film industry (i.e., making films this year).
+*/
+
 -- Struct types definition
 
 -- drop type films cascade;
@@ -16,7 +36,7 @@ create type quality_scoring as enum ('star','good','average','bad');
 
 -- Cumulative Table definition
 
-drop table actors;
+-- drop table actors;
 
 create table actors
     (
@@ -28,12 +48,15 @@ create table actors
         current_year integer
     );
 
--- Cumulative Actors Insert Query Definition
+/* Cumulative table generation query: Write a query that populates the actors table one year at a time. */
+
+-- Cumulative actors insert query definition
+
 insert into actors
 with
     previous as
 (
-    select * from actors where current_year = 1970
+    select * from actors where current_year = 1971
 ),
     current as
 (
@@ -55,7 +78,7 @@ with
                     else null
                 end
         end::quality_scoring as quality_class
-    from actor_films where year = 1971
+    from actor_films where year = 1972
     group by actorid, actor, year
 )
 select
@@ -79,4 +102,4 @@ from previous p
 
 -- Check on actors results
 
-table actors;
+table actors order by current_year desc;
